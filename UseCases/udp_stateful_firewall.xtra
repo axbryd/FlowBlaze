@@ -1,0 +1,73 @@
+import "standard_headers.xtrah";
+
+Stage connection {
+
+	// FlowKey: 5-tupla
+	setFlowKey(ipv4.src, ipv4.dst, tcp.sport, tcp.dport);
+
+	State initial init {
+
+		on (pktRcvd){
+			if (pktRcvd.port == 1) {
+				setNextState(established);
+			}
+
+			if (pktRcvd.port == 2) {
+				setTimer(1, 1, 2000000);
+				setNextState(established);
+			}
+		}
+	}
+
+	State newConnection {
+		on (pktRcvd){
+
+			if (pktRcvd.port == 2) {
+				setTimer(1, 1, 2000000);
+			}
+
+			if (pktRcvd.port == 1) {
+				setTimer(1, 1, 2000000);
+				setField(packet.metadata, 255, 1);
+				setNextState(established);
+			}
+		}
+
+		on (timeout) {
+			setNextState(init);
+		}
+	}
+
+	State established {
+		on (pktRcvd){
+			setField(packet.metadata, 255, 1);
+			setNextStage(forward); 
+		}
+
+		on (timeout) {
+			setNextState(init);
+		}
+	}
+}
+
+
+// Stage Stateless
+Stage forward {
+	setFlowKey();
+
+	State initial init {
+		on (pktRcvd){
+			if (pktRcvd.port == 1, packet.metadata == 1) {
+				// SendPacket(CURR_PKT, port)
+				sendPacket(255, 2);
+			}
+
+			if (pktRcvd.port == 2) {
+				// SendPacket(CURR_PKT, port)
+				sendPacket(255, 1);
+			}
+		}
+	}
+}
+
+	
