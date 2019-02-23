@@ -1,8 +1,4 @@
 # SW-FB
 
-Angelo, please add the software version of FB.
-
-Thanks!
-
-
-
+The software implementation of FB will be added soon.
+Thanks for checking!
