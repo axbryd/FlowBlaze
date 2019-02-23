@@ -1,8 +1,7 @@
 # XL-toolchain
 
-Giacomo, please add the XL toolchain.
-
-Thanks!
+XL toolchain will be added soon.
+Thanks for checking!
 
 
 
