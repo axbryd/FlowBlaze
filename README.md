@@ -11,4 +11,4 @@ The directories are organized as follows:
 * SW-FB: FlowBlaze Software implementation
 * UseCases: this directory contains the 4 use cases shown in the NSDI'19 demo
 * XL-toolchain: the directory contains the XL (XFSM Language) compiler and programmer
-
+* NetFPGA-loader: FlowBlaze programmer for the NetFPGA using the compiled output of XL programs
