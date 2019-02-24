@@ -3,9 +3,7 @@ import os
 import parser
 from fb_defines import *
 import serial
-import numpy as np
 
-from utils import isAnUpdate, hton
 import subprocess
 
 WRITE_END_STR = ", f, -."
@@ -14,12 +12,9 @@ SEPARATOR = ", "
 STR_FORMAT_32 = "{0:0{1}x}"
 STR_FORMAT_128 = "{0:0{1}x}"
 
-SERIAL_MODE = 0
 RWAXI_MODE = 1
-SIM_MODE = 2
-FILE_MODE = 3
-USB_MODE = 4
-BASH_MODE = 5
+SIM_MODE   = 2
+USB_MODE   = 3
 
 NUM_LANES = 4
 NUM_STAGES = 3
@@ -42,29 +37,18 @@ header_fields = {"XTRA_SRC_MAC": {'len': 6, 'offset': 6},
 
 
 class Programmer:
-    def __init__(self, mode=0, out_file_path=None, json_file="out.json", rwaxi_path=RWAXI_PATH, serial_name=None):
+    def __init__(self, mode=1, out_file_path=None, json_file="out.json", rwaxi_path=RWAXI_PATH, serial_name=None):
         self.mode = mode
         self.rwaxi_path = rwaxi_path
         self.parsed = parser.Parser(json_file)
         self.hfs = self.parsed.hfs
-        if mode == SERIAL_MODE:
-            if serial_name:
-                self.ser = serial.Serial(serial_name, 115200, timeout=0.02)
-        elif mode == FILE_MODE:
-            self.out_file = open(out_file_path, 'w')
-            self.out_file.write("// Flow blaze application\n\n")
-            self.out_file.write("void compiled_app() {\n")
-        elif mode == SIM_MODE:
+
+        if mode == SIM_MODE:
             self.out_file = open(out_file_path, 'w')
         elif mode == USB_MODE:
-            self.out_file = out_file_path
-        elif mode == BASH_MODE:
-            self.out_file = open(out_file_path, 'w')
-            self.out_file.write("#!/bin/bash\n")
+            self.serial_path = serial_name
 
     def finish(self):
-        if self.mode == FILE_MODE:
-            self.out_file.write("}\n")
         if self.mode != USB_MODE:
             self.out_file.close()
 
@@ -81,31 +65,11 @@ class Programmer:
             os.system(self.rwaxi_path + " -a 0x" + STR_FORMAT_32.format(addr, 8) +
                       " -w 0x" + STR_FORMAT_32.format(value, 8))
 
-        elif self.mode == SERIAL_MODE:
-            self.ser.write(b'W 0x' + STR_FORMAT_32.format(addr, 8) + " 0x" + STR_FORMAT_32.format(value, 8) + " \r")
-            print("writing: "+str(b'W 0x') + STR_FORMAT_32.format(addr, 8) + " 0x" + STR_FORMAT_32.format(value, 8) + " \\r")
-
-            line = "0"
-            self.ser.write(b'R 0x' + STR_FORMAT_32.format(addr, 8) + " 0x00 \r")
-            while line:
-                line = self.ser.readline()
-                print(line)
-
-        elif self.mode == FILE_MODE:
-            string = "\tregwrite(0x" + STR_FORMAT_32.format(addr, 8) + ", 0x" + STR_FORMAT_32.format(value, 8) + ");\n"
-            self.out_file.write(string)
-            print("0x" + STR_FORMAT_32.format(addr, 8) + ", 0x" + STR_FORMAT_32.format(value, 8))
-
         elif self.mode == USB_MODE:
             string = "echo -ne '97 0x" + STR_FORMAT_32.format(addr, 8) + \
-                     " 0x" + STR_FORMAT_32.format(value,8) + "\\r' > " + self.out_file + "; sleep 0.03;\n"
+                     " 0x" + STR_FORMAT_32.format(value, 8) + "\\r' > " + self.serial_path + "; sleep 0.03;\n"
             subprocess.call(["bash", "-c", string])
 
-            print(string)
-        elif self.mode == BASH_MODE:
-            string = "echo -ne \"97 0x" + STR_FORMAT_32.format(addr, 8) + \
-                     " 0x" + STR_FORMAT_32.format(value, 8) + "\\r\" > /dev/ttyUSB1; sleep 0.03;\n"
-            self.out_file.write(string)
             print(string)
 
         else:
@@ -193,7 +157,7 @@ class Programmer:
         pipealu_words = self.pipe_alu_actions_allocator(actions, curr_state)
 
         for a in actions:
-            if isAnUpdate(a['opcode']):
+            if is_an_update(a['opcode']):
                 continue
             elif a['opcode'] == 'XTRA_SENDPKT':
                 port = int(a['op1']['value'])
@@ -354,7 +318,7 @@ class Programmer:
 
         nb_actions = 0
         for a in actions:
-            if not isAnUpdate(a["opcode"]):
+            if not is_an_update(a["opcode"]):
                 continue
 
             if a['op2']['type'] == "XTRA_GLOBAL_REGISTER" and state == 0 and\
@@ -400,7 +364,7 @@ class Programmer:
         for a in actions:
             opc = 0
 
-            if not isAnUpdate(a['opcode']) \
+            if not is_an_update(a['opcode']) \
                     or a['op2']['type'] == "XTRA_GLOBAL_REGISTER" \
                     and state == 0 and \
                     a['op0']['type'] == "XTRA_INTEGER_CONST":
