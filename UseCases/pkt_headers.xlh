@@ -1,0 +1,23 @@
+
+PacketField eth {
+	src = packet.data[0:+6];
+	dst = packet.data[6:+6];
+}
+
+PacketField vlan {
+	id = packet.data[15:+1];
+}
+
+PacketField ipv4 {
+	tos = packet.data[15:+1];
+	proto = packet.data[23:+1];
+	src = packet.data[26:+4];
+	dst = packet.data[30:+4];
+}
+
+PacketField tcp {
+	sport = packet.data[34:+2];
+	dport = packet.data[36:+2];
+	csum = packet.data[50:+2];
+}
+

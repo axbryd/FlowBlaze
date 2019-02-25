@@ -1,0 +1,53 @@
+import "pkt_headers.xlh";
+
+PacketField ethByte {
+	dst = packet.data[5:+1];
+}
+
+Constant PKT = 255;
+
+Stage loadBalancer {
+	Register global counter, ZERO;
+
+	setFlowKey(tcp.sport, tcp.dport);
+
+	State initial init {
+		on(pktRcvd) {
+			if(pktRcvd.port == 1, counter > ZERO) {
+				counter = counter - 1;
+				setField(ethByte.dst, PKT, 0xaa);
+				sendPacket(PKT, 2);
+				setNextState(server1);
+			}
+
+			if(pktRcvd.port == 1, counter == ZERO) {
+				counter = counter + 1;
+				setField(ethByte.dst, PKT, 0xbb);
+				sendPacket(PKT, 3);
+				setNextState(server2);
+			}
+		}
+	}
+
+	State server1 {
+		setField(ethByte.dst, PKT, 0xaa);
+		sendPacket(PKT, 2);
+	}
+
+	State server2 {
+		setField(ethByte.dst, PKT, 0xbb);
+		sendPacket(PKT, 3);
+	}
+
+	State any {
+		on(pktRcvd) {
+			if(pktRcvd.port ==2 ) {
+				sendPacket(PKT, 1);
+			}
+		
+			if(pktRcvd.port ==3 ) {
+				sendPacket(PKT, 1);
+			}
+		}
+	}
+}

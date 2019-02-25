@@ -1,0 +1,52 @@
+import "pkt_headers.xlh";
+
+Stage port_knocking_on_the_heavens_door {
+	Register global incrementalCounter;
+
+	setFlowKey(ipv4.src);
+
+	// Initialized to 0
+
+	State initial init {
+		on (pktRcvd){
+			if (tcp.dport == 2570) {
+				setNextState(port1);
+                
+			}
+		}
+	}
+
+	State port1 {
+		on (pktRcvd){
+			if (tcp.dport == 2827) {
+				setNextState(port2);
+            }
+		}
+	}
+
+	State port2 {
+		on (pktRcvd){
+			if (tcp.dport == 3084) {
+				setNextState(allowed);
+            }
+		}
+    }
+
+    State allowed {
+		on (pktRcvd){
+            if (tcp.dport == 22) {
+			    sendPacket(255, 2);
+		    }
+        	}
+	}
+
+        State any {
+                on(pktRcvd) {
+                        if(pktRcvd.port == 2) {
+                                sendPacket(255, 1);
+                        }
+
+                }
+
+            }
+}

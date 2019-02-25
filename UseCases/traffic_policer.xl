@@ -1,0 +1,46 @@
+import "pkt_headers.xlh";
+
+Stage connection {
+	// Initialized to 0
+	
+	Register global BQ, frequency;
+	Register Tmin, Tmax;
+
+    Action drop {
+        sendPacket(255,0);
+    }
+
+	setFlowKey(ipv4.src);
+
+	State initial init {
+		on (pktRcvd){
+			BQ = 0x50;
+			frequency = 0x40;
+			Tmin = currentTime - BQ; 
+			Tmax = currentTime + frequency;
+			sendPacket(255, 1);
+			setNextState(established);
+		}
+	}
+
+	State established {
+	    on (pktRcvd){
+		    if (currentTime <= Tmin) {
+			    drop();
+		}            
+	 
+
+            if (Tmin < currentTime, currentTime <= Tmax) {
+				Tmin = Tmin + frequency; 
+				Tmax = Tmax + frequency;
+				sendPacket(255, 1);
+			}
+
+			if (currentTime > Tmax) {
+				Tmin = currentTime - BQ; 
+				Tmax = currentTime + frequency;
+				sendPacket(255, 1);
+			}
+		}
+	}
+}
