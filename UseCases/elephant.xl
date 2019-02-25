@@ -1,0 +1,36 @@
+import "pkt_headers.xlh";
+
+Constant PKT = 255;
+
+Stage elephant {
+	Register counter;
+	Register global threshold;
+
+	Action forwardElephantPacket {
+		setField(ipv4.tos, PKT, 150);
+		sendPacket(PKT, 1);
+	}
+
+	setFlowKey(ipv4.src, ipv4.dst);
+
+	State initial default {
+        threshold=150;
+        on(pktRcvd) {
+            if(counter < threshold) {
+				counter = counter + 1;
+				sendPacket(PKT, 1);
+			}
+
+			if(counter >= threshold) {
+                		sendPacket(PKT, 1);
+                		setNextState(elephant_detected);
+			}
+		}
+    	}
+
+	State elephant_detected {
+		on(pktRcvd) {
+			forwardElephantPacket();
+		}
+	}
+}
