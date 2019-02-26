@@ -7,8 +7,8 @@ This is the repository for the FlowBlaze's source codes.
 
 The directories are organized as follows:
 
-* NetFPGA-SUME-FB: FlowBlaze NetFPGA implementation
-* SW-FB: FlowBlaze Software implementation
-* UseCases: this directory contains the 4 use cases shown in the NSDI'19 demo
-* XL-toolchain: the directory contains the XL (XFSM Language) compiler and programmer
-* NetFPGA-loader: FlowBlaze programmer for the NetFPGA using the compiled output of XL programs
+* [NetFPGA-SUME-FB relative link](NetFPGA-SUME-FB/README.md): FlowBlaze NetFPGA implementation
+* [SW-FB relative link](SW-FB/README.md): FlowBlaze Software implementation
+* [UseCases relative link](UseCases/README.md): this directory contains the 4 use cases shown in the NSDI'19 demo
+* [XL-toolchain relative link](XL-toolchain/README.md): the directory contains the XL (XFSM Language) compiler and programmer
+* [NetFPGA-loader relative link](NetFPGA-loader/README.md): FlowBlaze programmer for the NetFPGA using the compiled output of XL programs
