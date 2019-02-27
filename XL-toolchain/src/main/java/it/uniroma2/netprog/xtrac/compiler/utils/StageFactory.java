@@ -62,7 +62,7 @@ public class StageFactory {
                 stages += name+", ";
             }
             if(pendingStages.keySet().size() == 1)
-                throw new UndeclaredStateException("The stage "+stages.substring(0, stages.length()-2)+"wasn't declared!");
+                throw new UndeclaredStateException("The stage "+stages.substring(0, stages.length()-2)+" wasn't declared!");
             else
                 throw new UndeclaredStateException("The stages "+stages.substring(0, stages.length()-2)+" weren't declared!");
         }

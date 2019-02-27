@@ -68,7 +68,7 @@ public class OperandFactory {
     }
 
     private Operand getOperand(xtraParser.Index_accessContext index_accessContext) throws InvalidValueException, UnknownOpcodeException {
-        return PacketFieldFactory.getInstance().getPacketFieldFromIndexAccess(index_accessContext.field_elem().getText(), index_accessContext.INDEX().getText());
+        return PacketFieldFactory.getInstance().getPacketFieldFromIndexAccess(index_accessContext.field_elem().getText(), index_accessContext.INDEX().getText(), "");
     }
 
     private Operand getOperand(xtraParser.AddrContext addrContext) {

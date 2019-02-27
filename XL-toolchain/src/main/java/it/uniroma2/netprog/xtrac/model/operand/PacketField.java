@@ -13,6 +13,7 @@ public class PacketField implements Operand {
     String name;
     String from;
     String length;
+    String value;
 
     @Override
     public String toString() {

@@ -7,6 +7,7 @@ import it.uniroma2.netprog.xtrac.model.action.StageTransition;
 import it.uniroma2.netprog.xtrac.model.action.StateTransition;
 import it.uniroma2.netprog.xtrac.model.condition.ConditionResult;
 import it.uniroma2.netprog.xtrac.model.event.Event;
+import it.uniroma2.netprog.xtrac.model.stage.Stage;
 import it.uniroma2.netprog.xtrac.model.state.State;
 import it.uniroma2.netprog.xtrac.model.table.TableRow;
 import lombok.Getter;
@@ -53,7 +54,7 @@ public class TableRowFactory {
 
     public void createNewTableRow(Event event, State state) {
         // This initialize the creation of a new table-row (call first!)
-        current = new TableRow(state, event, StageFactory.getInstance().getLastDeclaredStage());
+        current = new TableRow(state, event, new Stage(255));
         tableRows.add(current);
 
         if (!eventRows.containsKey(event))
@@ -128,7 +129,7 @@ public class TableRowFactory {
     private void finalizeEventRows(Collection<TableRowStateEventActions> values) {
         for (TableRowStateEventActions value : values) {
             if (value.getTableRows().isEmpty()) {
-                TableRow tableRow = new TableRow(CompilerStateMachine.getInstance().getCurrentState(), CompilerStateMachine.getInstance().getCurrentEvent(), StageFactory.getInstance().getLastDeclaredStage());
+                TableRow tableRow = new TableRow(CompilerStateMachine.getInstance().getCurrentState(), CompilerStateMachine.getInstance().getCurrentEvent(), new Stage(255));
                 value.getTableRows().add(tableRow);
                 tableRows.add(tableRow);
             }
@@ -146,7 +147,7 @@ public class TableRowFactory {
         for (TableRowStateEventActions value : values) {
             if (value.getTableRows().isEmpty())
                 for(Event event: Event.getEvents()) {
-                    TableRow tableRow = new TableRow(CompilerStateMachine.getInstance().getCurrentState(), event, StageFactory.getInstance().getLastDeclaredStage());
+                    TableRow tableRow = new TableRow(CompilerStateMachine.getInstance().getCurrentState(), event, new Stage(255));
                     value.getTableRows().add(tableRow);
                     tableRows.add(tableRow);
                 }
