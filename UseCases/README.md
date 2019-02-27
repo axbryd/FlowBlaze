@@ -17,7 +17,7 @@ This application marks packets belonging to a given flow if the flow has generat
 
 ## Port Knocking Firewall
 
-This use case implements a port knocking firewall, a well-known method for opening a port on a firewall. An IP host that wants to establish a connection to a remote server (say an SSH session, i.e., port 22), delivers a sequence of packets addressed to an ordered list of pre-defined closed ports, say ports 2570, 2827 and 3084. Once the exact sequence of packets is received, the firewall allow the connections for the considered host. Before this stage, all packets (including the knocking ones) are dropped.
+This use case implements a port knocking firewall, a well-known method for opening a port on a firewall. An IP host that wants to establish a connection to a remote server (say an SSH session, i.e., port 22), delivers a sequence of packets addressed to an ordered list of pre-defined closed ports, say ports 2570, 2827, 3084 and 5555. Once the exact sequence of packets is received, the firewall allow the connections for the considered host. Before this stage, all packets (including the knocking ones) are dropped.
 Starting from a INITIAL state, each correctly knocked port will cause a transition to a series of two intermediate states, PORT1 and PORT2, until a final ALLOWED state, 4, is reached.
 
 ## Traffic Policer

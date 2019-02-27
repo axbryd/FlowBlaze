@@ -14,7 +14,7 @@ Stage connection {
 
 	State initial init {
 		on (pktRcvd){
-			BQ = 0x50;
+			BQ = 0xffa0;
 			frequency = 0x40;
 			Tmin = currentTime - BQ; 
 			Tmax = currentTime + frequency;
@@ -27,20 +27,20 @@ Stage connection {
 	    on (pktRcvd){
 		    if (currentTime <= Tmin) {
 			    drop();
-		}            
+		    }            
 	 
 
             if (Tmin < currentTime, currentTime <= Tmax) {
-				Tmin = Tmin + frequency; 
-				Tmax = Tmax + frequency;
-				sendPacket(255, 1);
-			}
+                Tmin = Tmin + frequency; 
+                Tmax = Tmax + frequency;
+                sendPacket(255, 1);
+            }
 
-			if (currentTime > Tmax) {
-				Tmin = currentTime - BQ; 
-				Tmax = currentTime + frequency;
-				sendPacket(255, 1);
-			}
+            if (currentTime > Tmax) {
+                Tmin = currentTime - BQ; 
+                Tmax = currentTime + frequency;
+                sendPacket(255, 1);
+            }
 		}
 	}
 }
