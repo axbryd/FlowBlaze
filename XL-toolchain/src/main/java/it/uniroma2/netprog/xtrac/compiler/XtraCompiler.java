@@ -70,7 +70,7 @@ public class XtraCompiler extends xtraBaseListener {
             String fieldName = ctx.identifier().ID().getText() + "." + packet_field_entryContext.identifier().getText();
 
             try {
-                PacketField packetField = PacketFieldFactory.getInstance().getPacketFieldFromIndexAccess(packet_field_entryContext.index_access().field_elem().getText(), packet_field_entryContext.index_access().INDEX().getText());
+                PacketField packetField = PacketFieldFactory.getInstance().getPacketFieldFromIndexAccess(packet_field_entryContext.index_access().field_elem().getText(), packet_field_entryContext.index_access().INDEX().getText(), fieldName);
                 PacketFieldFactory.getInstance().addPacketField(fieldName, packetField);
             } catch (InvalidValueException | UnknownOpcodeException e) {
                 compileError(e);

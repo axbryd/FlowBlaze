@@ -14,8 +14,13 @@ public class OperandSerializer implements JsonSerializer {
 
         jsonObject.addProperty("type", OperandType.toEnum((Operand) o).toString());
 
-        if(o.getClass() == LocalRegister.class || o.getClass() == GlobalRegister.class || o.getClass() == PacketField.class || o.getClass() == ReadOnlyRegister.class)
+        if(o.getClass() == LocalRegister.class || o.getClass() == GlobalRegister.class || o.getClass() == ReadOnlyRegister.class)
             jsonObject.addProperty("name", o.toString());
+        else if (o.getClass() == PacketField.class) {
+            PacketField packetField = (PacketField) o;
+            jsonObject.addProperty("name", packetField.getName());
+            jsonObject.addProperty("value", packetField.getValue());
+        }
         else
             jsonObject.addProperty("value", o.toString());
 
