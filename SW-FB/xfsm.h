@@ -78,7 +78,7 @@ typedef enum {
 #define NUM_HDR_FIELDS 28
 
 
-const struct xfsm_hdr_fields {
+extern const struct xfsm_hdr_fields {
     hdr_fields type;
     const char *name;
     size_t len;
